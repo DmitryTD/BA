@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 int main(void)
 {
@@ -70,46 +71,66 @@ int main(void)
     int length_first = json_branch_first["length"];
     int length_second = json_branch_second["length"];
 
-    for(int i = 0; i < 100; ++i){
+    exit = 1;
+    while(exit){
         nlohmann::json temp_json;
-
-        if(json_branch_first["packages"][pointer_first]["arch"] == json_branch_second["packages"][pointer_second]["arch"]){
-            if (json_branch_first["packages"][pointer_first]["name"] == json_branch_second["packages"][pointer_second]["name"])
-            {       
-                if(json_branch_first["packages"][pointer_first]["version"] > json_branch_second["packages"][pointer_second]["version"])
-                {
-                    temp_json["bigger_version"] = json_branch_first["packages"][pointer_first]["name"];
-                    temp_json["arch"] = json_branch_first["packages"][pointer_first]["arch"];
-                    task_third.push_back(temp_json);
+        if(pointer_first < length_first || pointer_second < length_second)
+        {
+            if(json_branch_first["packages"][pointer_first]["arch"] == json_branch_second["packages"][pointer_second]["arch"]){
+                if (json_branch_first["packages"][pointer_first]["name"] == json_branch_second["packages"][pointer_second]["name"])
+                {       
+                    if(json_branch_first["packages"][pointer_first]["release"] > json_branch_second["packages"][pointer_second]["release"])
+                    {
+                        temp_json["bigger_version-release"] = json_branch_first["packages"][pointer_first]["name"];
+                        temp_json["arch"] = json_branch_first["packages"][pointer_first]["arch"];
+                        task_third.push_back(temp_json);
+                    }
+                    ++pointer_first;
+                    ++pointer_second;
                 }
-                ++pointer_first;
-                ++pointer_second;
+                else if (json_branch_first["packages"][pointer_first]["name"] > json_branch_second["packages"][pointer_second]["name"])
+                {
+                    temp_json["name"] = json_branch_second["packages"][pointer_second]["name"];
+                    temp_json["arch"] = json_branch_second["packages"][pointer_second]["arch"];
+                    task_second.push_back(temp_json);
+                    ++pointer_second;
+                }
+                else if (json_branch_first["packages"][pointer_first]["name"] < json_branch_second["packages"][pointer_second]["name"])
+                {
+                    temp_json["name"] = json_branch_first["packages"][pointer_first]["name"];
+                    temp_json["arch"] = json_branch_first["packages"][pointer_first]["arch"];
+                    task_first.push_back(temp_json);
+                    ++pointer_first;
+                }
             }
-            else if (json_branch_first["packages"][pointer_first]["name"] > json_branch_second["packages"][pointer_second]["name"])
-            {
-                temp_json["name"] = json_branch_second["packages"][pointer_second]["name"];
-                temp_json["arch"] = json_branch_second["packages"][pointer_second]["arch"];
-                task_second.push_back(temp_json);
-                ++pointer_second;
+            else {
+                if(json_branch_first["packages"][pointer_first]["arch"] > json_branch_second["packages"][pointer_second]["arch"])
+                {
+                    temp_json["name"] = json_branch_second["packages"][pointer_second]["name"];
+                    temp_json["arch"] = json_branch_second["packages"][pointer_second]["arch"];
+                    task_second.push_back(temp_json);
+                    ++pointer_second;
+                }
+                if(json_branch_first["packages"][pointer_first]["arch"] < json_branch_second["packages"][pointer_second]["arch"])
+                {
+                    temp_json["name"] = json_branch_first["packages"][pointer_first]["name"];
+                    temp_json["arch"] = json_branch_first["packages"][pointer_first]["arch"];
+                    task_first.push_back(temp_json);
+                    ++pointer_first;
+                }
             }
-            else if (json_branch_first["packages"][pointer_first]["name"] < json_branch_second["packages"][pointer_second]["name"])
-            {
-                temp_json["name"] = json_branch_first["packages"][pointer_first]["name"];
-                temp_json["arch"] = json_branch_first["packages"][pointer_first]["arch"];
-                task_first.push_back(temp_json);
-                ++pointer_first;
-            }
-        }
+        } 
         else {
-            if(json_branch_first["packages"][pointer_first]["arch"] > json_branch_second["packages"][pointer_second]["arch"])
-            {
+            if(pointer_first == length_first && pointer_second == length_second){
+                exit = 0;
+            }
+            else if(pointer_first == length_first){
                 temp_json["name"] = json_branch_second["packages"][pointer_second]["name"];
                 temp_json["arch"] = json_branch_second["packages"][pointer_second]["arch"];
                 task_second.push_back(temp_json);
                 ++pointer_second;
-            }
-            if(json_branch_first["packages"][pointer_first]["arch"] < json_branch_second["packages"][pointer_second]["arch"])
-            {
+            } 
+            else if(pointer_second == length_second){
                 temp_json["name"] = json_branch_first["packages"][pointer_first]["name"];
                 temp_json["arch"] = json_branch_first["packages"][pointer_first]["arch"];
                 task_first.push_back(temp_json);
@@ -124,8 +145,14 @@ int main(void)
     result["second_task"] = task_second;
     result["third_task"] = task_third;
 
-    std::cout << result << std::endl;
-
+    //std::cout << result << std::endl;
+    std::ofstream out;
+    out.open("Result.json");
+    if (out.is_open())
+    {
+        out << result << std::endl;
+    }
+    out.close(); 
 
     return 0;
 }
