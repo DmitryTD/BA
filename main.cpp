@@ -20,25 +20,25 @@ int main(void)
 
     //доступные пакеты записываются в branch_list
     response_temp = json_branch_first["validation_message"][1];
-    while(!(response_temp.find("\'") == std::string::npos)){       
+    while(!(response_temp.find("\'") == std::string::npos))
+    {       
         response_temp.erase(0, response_temp.find("\'") + 1);
         branch_list.push_back(response_temp.substr(0, response_temp.find("\'")));
         response_temp.erase(0, response_temp.find("\'") + 1);
     }
-    
-    
+       
     //выбор списков пакетов
     int choice_first, choice_second, exit = 1;
 
     while(exit){
-        std::cout << "Выберите первую ветку для сравнения" << std::endl;
+        std::cout << "Выберите первую ветку для сравнения (только число перед названием)" << std::endl;
         for(int i = 0; i < branch_list.size(); ++i) {
             std::cout << i + 1 << " " << branch_list[i] << std::endl;
         }
         std::cin >> choice_first;
 
         
-        std::cout << "Выберите вторую ветку для сравнения" << std::endl;
+        std::cout << "Выберите вторую ветку для сравнения (только число перед названием)" << std::endl;
         for(int i = 0; i < branch_list.size(); ++i) {
             std::cout << i + 1 << " " << branch_list[i] << std::endl;
         }
@@ -47,7 +47,8 @@ int main(void)
         //Получение данных
         std::cout << "Получение данных..." << std::endl;
         if(choice_first > 0 && choice_first <= branch_list.size()
-        && choice_second > 0 && choice_second <= branch_list.size()) {
+        && choice_second > 0 && choice_second <= branch_list.size()) 
+        {
             exit = 0;
             response_temp.clear();
             get_response(response_temp, branch_list[choice_first - 1]);
@@ -103,7 +104,8 @@ int main(void)
                     ++pointer_first;
                 }
             }
-            else {
+            else 
+            {
                 if(json_branch_first["packages"][pointer_first]["arch"] > json_branch_second["packages"][pointer_second]["arch"])
                 {
                     temp_json["name"] = json_branch_second["packages"][pointer_second]["name"];
@@ -145,7 +147,6 @@ int main(void)
     result["second_task"] = task_second;
     result["third_task"] = task_third;
 
-    //std::cout << result << std::endl;
     std::ofstream out;
     out.open("Result.json");
     if (out.is_open())
@@ -153,6 +154,6 @@ int main(void)
         out << result << std::endl;
     }
     out.close(); 
-
+    std::cout << "Результат записан в Result.json" << std::endl;
     return 0;
 }
