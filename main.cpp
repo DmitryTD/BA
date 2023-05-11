@@ -1,4 +1,4 @@
-#include "lib.cpp"
+#include "lib.h"
 
 #include <nlohmann/json.hpp>
 
@@ -13,7 +13,7 @@ int main(void)
     std::string response_temp;
     std::string branch = "get";
     get_response(response_temp, branch);
-    
+ 
     std::vector <std::string> branch_list;
     nlohmann::json json_branch_first = nlohmann::json::parse(response_temp);
     nlohmann::json json_branch_second;
@@ -51,10 +51,13 @@ int main(void)
         {
             exit = 0;
             response_temp.clear();
-            get_response(response_temp, branch_list[choice_first - 1]);
+            branch = branch_list[choice_first - 1];
+            get_response(response_temp, branch);
             json_branch_first = nlohmann::json::parse(response_temp);
+            
             response_temp.clear();
-            get_response(response_temp, branch_list[choice_second - 1]);
+            branch = branch_list[choice_second - 1];
+            get_response(response_temp, branch);
             json_branch_second = nlohmann::json::parse(response_temp);
         }
         else {
