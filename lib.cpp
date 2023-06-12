@@ -34,12 +34,6 @@ std::string get_response(std::string &response, std::string &branch){
 }
 
 
-void show_array(std::vector <std::string>& array){
-    for(unsigned int i = 0; i < array.size(); ++i) {
-        std::cout << i + 1 << " " << array[i] << std::endl;
-    }
-}
-
 
 void get_branch_list(std::vector <std::string>& array, nlohmann::json& json_branch){
     std::string response = json_branch["validation_message"][1];
